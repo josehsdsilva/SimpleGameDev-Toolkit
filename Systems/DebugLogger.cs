@@ -1,3 +1,5 @@
+namespace SimpleGameDev
+{
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -782,4 +784,5 @@ public class DebugLogger : MonoBehaviour
             EditorGUIUtility.isProSkin ? color * 1.2f : color * 0.8f;
     }
 #endif
+}
 }

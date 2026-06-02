@@ -1,3 +1,5 @@
+namespace SimpleGameDev.Editor
+{
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEditor.Toolbars;
@@ -79,4 +81,6 @@ internal static class PrefabOverridesToolbar
 
         return new MainToolbarLabel(new MainToolbarContent(text, tooltip));
     }
+}
+
 }

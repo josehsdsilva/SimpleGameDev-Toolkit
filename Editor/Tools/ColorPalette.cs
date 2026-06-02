@@ -1,3 +1,5 @@
+namespace SimpleGameDev.Editor
+{
 using UnityEngine;
 using System;
 using System.Collections.Generic;
@@ -20,4 +22,6 @@ public class ColorEntry
         this.name = name;
         this.color = color;
     }
+}
+
 }

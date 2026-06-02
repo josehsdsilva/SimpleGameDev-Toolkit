@@ -1,3 +1,5 @@
+namespace SimpleGameDev
+{
 using System;
 
 [AttributeUsage(AttributeTargets.Class, Inherited = true, AllowMultiple = false)]
@@ -9,4 +11,6 @@ public class HideInSceneViewAttribute : Attribute
     {
         GroupName = groupName;
     }
+}
+
 }

@@ -1,3 +1,5 @@
+namespace SimpleGameDev.Editor
+{
 using UnityEditor;
 using UnityEngine.UI;
 
@@ -57,4 +59,6 @@ public static class RaycastTargetTool
             $"Raycast Target desativado em {count} componente(s), exceto Buttons.",
             "OK");
     }
+}
+
 }

@@ -1,3 +1,5 @@
+namespace SimpleGameDev.Editor
+{
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -153,4 +155,6 @@ internal class SimpleGameDevHub : EditorWindow
         EditorGUI.DrawRect(rect, new Color(0.5f, 0.5f, 0.5f, 0.3f));
         EditorGUILayout.Space(4);
     }
+}
+
 }

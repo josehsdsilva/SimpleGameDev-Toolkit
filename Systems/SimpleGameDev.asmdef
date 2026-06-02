@@ -1,5 +1,6 @@
 {
 	"name": "SimpleGameDev",
+	"rootNamespace": "SimpleGameDev",
 	"references": [
 		"Unity.TextMeshPro"
 	]

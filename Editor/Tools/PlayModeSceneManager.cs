@@ -1,3 +1,5 @@
+namespace SimpleGameDev.Editor
+{
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -47,4 +49,5 @@ public class PlayModeSceneManager
         EditorPrefs.SetString(START_SCENE_KEY, scenePath);
         DebugLogger.Instance.Log($"Start scene set to: {scenePath}");
     }
+}
 }

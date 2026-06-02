@@ -1,3 +1,5 @@
+namespace SimpleGameDev.Editor
+{
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
@@ -470,4 +472,6 @@ internal class PlayerPrefsEditor : EditorWindow
         }
     }
 #endif
+}
+
 }

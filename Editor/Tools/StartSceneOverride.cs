@@ -1,3 +1,5 @@
+namespace SimpleGameDev.Editor
+{
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -76,4 +78,6 @@ internal static class StartSceneOverride
 
         EditorGUILayout.EndHorizontal();
     }
+}
+
 }

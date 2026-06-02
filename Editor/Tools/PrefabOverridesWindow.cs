@@ -1,3 +1,5 @@
+namespace SimpleGameDev.Editor
+{
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -259,5 +261,7 @@ internal class PrefabOverridesWindow : EditorWindow
 
         EditorGUILayout.EndVertical();
     }
+
+}
 
 }

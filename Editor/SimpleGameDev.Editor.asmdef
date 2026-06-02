@@ -1,6 +1,6 @@
 {
     "name": "SimpleGameDev.Editor",
-    "rootNamespace": "",
+    "rootNamespace": "SimpleGameDev.Editor",
     "references": [
         "SimpleGameDev"
     ],

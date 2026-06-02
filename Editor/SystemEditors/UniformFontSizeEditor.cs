@@ -1,3 +1,5 @@
+namespace SimpleGameDev.Editor
+{
 using UnityEditor;
 using UnityEngine;
 
@@ -14,4 +16,6 @@ public class UniformFontSizeEditor : Editor
             component.Refresh();
         }
     }
+}
+
 }

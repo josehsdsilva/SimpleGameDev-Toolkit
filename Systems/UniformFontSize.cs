@@ -1,3 +1,5 @@
+namespace SimpleGameDev
+{
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -96,4 +98,6 @@ public class UniformFontSize : MonoBehaviour
             t.fontSize = smallest;
         }
     }
+}
+
 }

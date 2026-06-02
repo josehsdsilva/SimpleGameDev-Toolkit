@@ -1,3 +1,5 @@
+namespace SimpleGameDev.Editor
+{
 using UnityEditor;
 using UnityEditor.Toolbars;
 using UnityEngine;
@@ -77,4 +79,6 @@ internal class GitBranchToolbar
             return "No Git";
         }
     }
+}
+
 }

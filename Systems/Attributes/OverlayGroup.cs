@@ -1,3 +1,5 @@
+namespace SimpleGameDev
+{
 public class OverlayGroup
 {
     public string Name { get; }
@@ -8,4 +10,6 @@ public class OverlayGroup
         Name = name;
         Order = order;
     }
+}
+
 }

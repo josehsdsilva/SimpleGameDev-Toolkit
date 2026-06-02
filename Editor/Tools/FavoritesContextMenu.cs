@@ -1,3 +1,5 @@
+namespace SimpleGameDev.Editor
+{
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
@@ -183,4 +185,5 @@ public class FavoritesContextMenu
             Debug.LogError($"Error saving favorites: {e.Message}");
         }
     }
+}
 }

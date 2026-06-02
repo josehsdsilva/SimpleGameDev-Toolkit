@@ -1,3 +1,5 @@
+namespace SimpleGameDev.Editor
+{
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
@@ -49,4 +51,6 @@ public static class RenameButtonFromTextTool
         }
         return "";
     }
+}
+
 }

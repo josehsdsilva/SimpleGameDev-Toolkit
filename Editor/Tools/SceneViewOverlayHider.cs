@@ -1,3 +1,5 @@
+namespace SimpleGameDev.Editor
+{
 #if UNITY_EDITOR
 using System;
 using System.Collections.Generic;
@@ -318,3 +320,5 @@ internal class SceneViewOverlayHider : Overlay
     }
 }
 #endif
+
+}

@@ -1,3 +1,5 @@
+namespace SimpleGameDev.Editor
+{
 using System.IO;
 using UnityEditor;
 
@@ -91,4 +93,6 @@ internal static class AutoRefreshWatcher
             AssetDatabase.Refresh();
         }
     }
+}
+
 }

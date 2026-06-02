@@ -1,3 +1,5 @@
+namespace SimpleGameDev.Editor
+{
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -319,4 +321,6 @@ internal static class PrefabOverridesScanner
             current = deeper;
         }
     }
+}
+
 }

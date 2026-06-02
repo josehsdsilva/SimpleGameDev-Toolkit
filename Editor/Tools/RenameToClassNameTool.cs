@@ -1,3 +1,5 @@
+namespace SimpleGameDev.Editor
+{
 using UnityEditor;
 using UnityEngine;
 
@@ -15,4 +17,6 @@ public static class RenameToClassNameTool
         Undo.RecordObject(go, "Rename GameObject to Class Name");
         go.name = newName;
     }
+}
+
 }

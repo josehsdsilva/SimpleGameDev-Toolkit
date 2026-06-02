@@ -1,3 +1,5 @@
+namespace SimpleGameDev
+{
 using UnityEngine;
 
 /// <summary>
@@ -10,4 +12,6 @@ public class PersistentObject : MonoBehaviour
     {
         DontDestroyOnLoad(gameObject);
     }
+}
+
 }

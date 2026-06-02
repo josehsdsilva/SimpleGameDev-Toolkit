@@ -1,3 +1,5 @@
+namespace SimpleGameDev.Editor
+{
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
@@ -283,4 +285,6 @@ public class ColorPaletteWindow : EditorWindow
         EditorUtility.SetDirty(currentPalette);
         ShowNotification(new GUIContent("Added 6 common UI colors!"));
     }
+}
+
 }

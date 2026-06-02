@@ -1,3 +1,5 @@
+namespace SimpleGameDev.Editor
+{
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
@@ -725,4 +727,6 @@ public class FavoritesTab : EditorWindow
         // Change cursor to move cursor when hovering
         EditorGUIUtility.AddCursorRect(rect, MouseCursor.Pan);
     }
+}
+
 }

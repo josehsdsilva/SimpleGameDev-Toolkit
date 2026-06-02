@@ -1,3 +1,5 @@
+namespace SimpleGameDev
+{
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -103,4 +105,6 @@ public class ScrollToVisible : MonoBehaviour
             contentRect.anchoredPosition = newPos;
         }
     }
+}
+
 }
