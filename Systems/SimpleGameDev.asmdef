@@ -1,0 +1,6 @@
+{
+	"name": "SimpleGameDev",
+	"references": [
+		"Unity.TextMeshPro"
+	]
+}

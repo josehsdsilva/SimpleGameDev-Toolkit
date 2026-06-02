@@ -1,0 +1,5 @@
+# Unity / OS noise (this repo only holds the package source; no Library/Temp here)
+.DS_Store
+Thumbs.db
+*.tmp
+*.bak

@@ -1,0 +1,13 @@
+{
+  "name": "com.josesilva.simplegamedev",
+  "version": "1.0.0",
+  "displayName": "SimpleGameDev",
+  "description": "Reusable Unity editor tools and runtime helpers (Favorites, Hub, Color Palette, Prefab Overrides, DebugLogger, PersistentObject, etc.).",
+  "unity": "6000.0",
+  "author": {
+    "name": "José Silva"
+  },
+  "dependencies": {
+    "com.unity.nuget.newtonsoft-json": "3.2.1"
+  }
+}
