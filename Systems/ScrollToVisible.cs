@@ -8,102 +8,134 @@ public class ScrollToVisible : MonoBehaviour
 {
     private ScrollRect scrollRect;
     private RectTransform targetRect;
+    private readonly Vector3[] itemCorners = new Vector3[4];
+
     
     private void Awake()
     {
         scrollRect = GetComponentInParent<ScrollRect>();
         targetRect = transform as RectTransform;
     }
-    
-    public void Scroll()
+
+     public void Scroll(int siblingOffset = 0)
     {
-        if (scrollRect == null) return;
-        
+        Transform parent = transform.parent;
+        if (parent == null || parent.childCount == 0)
+            return;
+
+        int currentIndex = transform.GetSiblingIndex();
+        int targetIndex = Mathf.Clamp(currentIndex + siblingOffset, 0, parent.childCount - 1);
+
+        Transform targetSibling = parent.GetChild(targetIndex);
+
+        if (targetSibling.TryGetComponent(out ScrollToVisible targetScroll))
+        {
+            targetScroll.Scroll();
+        }
+        else if (targetSibling is RectTransform siblingRect && EnsureScrollRect())
+        {
+            RectTransform originalTarget = targetRect;
+            targetRect = siblingRect;
+            Scroll();
+            targetRect = originalTarget;
+        }
+    }
+    
+    public void ScrollToBottom()
+    {
+        if (!EnsureScrollRect())
+            return;
+
         Canvas.ForceUpdateCanvases();
-        
+
         RectTransform contentRect = scrollRect.content;
         RectTransform viewportRect = scrollRect.viewport;
-        
-        // Scroll vertical
+        Vector2 newPos = contentRect.anchoredPosition;
+
+        targetRect.GetWorldCorners(itemCorners);
+
         if (scrollRect.vertical)
         {
             float viewportHeight = viewportRect.rect.height;
-            float contentHeight = contentRect.rect.height;
-            
-            // Posições em espaço do viewport
-            Vector3[] itemCorners = new Vector3[4];
-            targetRect.GetWorldCorners(itemCorners);
-            
-            Vector3[] viewportCorners = new Vector3[4];
-            viewportRect.GetWorldCorners(viewportCorners);
-            
-            // Converte para espaço local do viewport
-            float itemTop = viewportRect.InverseTransformPoint(itemCorners[1]).y;      // Top-left corner
-            float itemBottom = viewportRect.InverseTransformPoint(itemCorners[0]).y;   // Bottom-left corner
-            
-            float viewportTop = viewportHeight / 2;
-            float viewportBottom = -viewportHeight / 2;
-            
-            Vector2 newPos = contentRect.anchoredPosition;
-            
-            // Se o topo do item está cortado (acima do viewport)
-            if (itemTop > viewportTop)
-            {
-                float diff = itemTop - viewportTop;
-                newPos.y -= diff;
-            }
-            // Se o fundo do item está cortado (abaixo do viewport)
-            else if (itemBottom < viewportBottom)
-            {
-                float diff = viewportBottom - itemBottom;
-                newPos.y += diff;
-            }
-            
-            // CLAMP: limita aos bounds válidos
-            float minY = 0;
-            float maxY = Mathf.Max(0, contentHeight - viewportHeight);
-            newPos.y = Mathf.Clamp(newPos.y, minY, maxY);
-            
-            contentRect.anchoredPosition = newPos;
+            float halfHeight = viewportHeight * 0.5f;
+            float itemBottom = viewportRect.InverseTransformPoint(itemCorners[0]).y;
+
+            newPos.y += -halfHeight - itemBottom;
+
+            float maxY = Mathf.Max(0f, contentRect.rect.height - viewportHeight);
+            newPos.y = Mathf.Clamp(newPos.y, 0f, maxY);
         }
-        
-        // Scroll horizontal
+
         if (scrollRect.horizontal)
         {
             float viewportWidth = viewportRect.rect.width;
-            float contentWidth = contentRect.rect.width;
-            
-            Vector3[] itemCorners = new Vector3[4];
-            targetRect.GetWorldCorners(itemCorners);
-            
-            Vector3[] viewportCorners = new Vector3[4];
-            viewportRect.GetWorldCorners(viewportCorners);
-            
+            float halfWidth = viewportWidth * 0.5f;
+            float itemRight = viewportRect.InverseTransformPoint(itemCorners[2]).x;
+
+            newPos.x -= itemRight - halfWidth;
+
+            float minX = -Mathf.Max(0f, contentRect.rect.width - viewportWidth);
+            newPos.x = Mathf.Clamp(newPos.x, minX, 0f);
+        }
+
+        contentRect.anchoredPosition = newPos;
+    }
+
+    private void Scroll()
+    {
+        if (!EnsureScrollRect())
+            return;
+
+        Canvas.ForceUpdateCanvases();
+
+        RectTransform contentRect = scrollRect.content;
+        RectTransform viewportRect = scrollRect.viewport;
+        Vector2 newPos = contentRect.anchoredPosition;
+
+        targetRect.GetWorldCorners(itemCorners);
+
+        if (scrollRect.vertical)
+        {
+            float viewportHeight = viewportRect.rect.height;
+            float halfHeight = viewportHeight * 0.5f;
+
+            float itemTop = viewportRect.InverseTransformPoint(itemCorners[1]).y;
+            float itemBottom = viewportRect.InverseTransformPoint(itemCorners[0]).y;
+
+            if (itemTop > halfHeight)
+                newPos.y -= itemTop - halfHeight;
+            else if (itemBottom < -halfHeight)
+                newPos.y += -halfHeight - itemBottom;
+
+            float maxY = Mathf.Max(0f, contentRect.rect.height - viewportHeight);
+            newPos.y = Mathf.Clamp(newPos.y, 0f, maxY);
+        }
+
+        if (scrollRect.horizontal)
+        {
+            float viewportWidth = viewportRect.rect.width;
+            float halfWidth = viewportWidth * 0.5f;
+
             float itemLeft = viewportRect.InverseTransformPoint(itemCorners[0]).x;
             float itemRight = viewportRect.InverseTransformPoint(itemCorners[2]).x;
-            
-            float viewportLeft = -viewportWidth / 2;
-            float viewportRight = viewportWidth / 2;
-            
-            Vector2 newPos = contentRect.anchoredPosition;
-            
-            if (itemLeft < viewportLeft)
-            {
-                float diff = viewportLeft - itemLeft;
-                newPos.x += diff;
-            }
-            else if (itemRight > viewportRight)
-            {
-                float diff = itemRight - viewportRight;
-                newPos.x -= diff;
-            }
-            
-            float minX = -Mathf.Max(0, contentWidth - viewportWidth);
-            float maxX = 0;
-            newPos.x = Mathf.Clamp(newPos.x, minX, maxX);
-            
-            contentRect.anchoredPosition = newPos;
+
+            if (itemLeft < -halfWidth)
+                newPos.x += -halfWidth - itemLeft;
+            else if (itemRight > halfWidth)
+                newPos.x -= itemRight - halfWidth;
+
+            float minX = -Mathf.Max(0f, contentRect.rect.width - viewportWidth);
+            newPos.x = Mathf.Clamp(newPos.x, minX, 0f);
         }
+
+        contentRect.anchoredPosition = newPos;
+    }
+
+    private bool EnsureScrollRect()
+    {
+        if (scrollRect == null)
+            Awake();
+        return scrollRect != null;
     }
 }
 
