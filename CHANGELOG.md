@@ -4,6 +4,17 @@ All notable changes to this package are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-06-08
+
+### Added
+- `ScrollToVisible.ScrollToBottom()` and a `Scroll(int siblingOffset)` overload.
+
+### Changed
+- Aligned a `.meta` GUID for Elifoot consumers.
+- Install docs now recommend embedding via **git subtree** (the files are committed
+  into the consuming game's repo) instead of a git submodule, so consumers need no
+  access to this private repo and runtime dependencies are always present.
+
 ## [2.0.0]
 
 ### Changed
