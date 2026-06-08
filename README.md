@@ -42,6 +42,35 @@ Bump to a newer tag with one command (run by whoever owns this repo; other devs 
 git subtree pull --prefix Packages/com.josesilva.simplegamedev sgdt v2.2.0 --squash
 ```
 
+There is also a **global helper command** `toolkit` (a function in the owner's PowerShell
+`$PROFILE` that wraps the line above and auto-detects the git root, prefix and `sgdt`
+remote). From any game that embeds the kit:
+
+```powershell
+toolkit update          # pull the latest (main)
+toolkit update v2.2.0   # pull a specific tag
+```
+
+## Adding a new tool (incubate → promote)
+
+A tool usually starts and matures **inside a game** in real use, and only graduates to the
+kit once it's worth keeping. Workflow:
+
+1. **Incubate** — create the tool directly under the embedded package in the game, already
+   in its final home so it's tested as part of the kit:
+   - editor-only tooling → `Packages/com.josesilva.simplegamedev/Editor/...`
+   - runtime helpers → `Packages/com.josesilva.simplegamedev/Systems/...`
+   Use and refine it for as long as needed; commit to the **game** repo as you iterate. The
+   kit repo stays untouched.
+2. **Promote** (when proven) — from the standalone clone (see *Maintain* below):
+   - copy the proven files (same relative paths, keeping `.meta` files) into the clone;
+   - bump `version` in `package.json` and add a `CHANGELOG.md` entry;
+   - `git commit && git push && git tag vX.Y.Z && git push --tags`.
+   Because the tool was incubated in its final form, this is a straight file copy — no
+   namespace or asmdef changes.
+3. **Propagate** — in each game, `toolkit update vX.Y.Z` (or the `git subtree pull` above)
+   brings the new tool in.
+
 ## Maintain the toolkit (centrally)
 
 Keep a standalone clone of this repo, independent of any game:
@@ -58,5 +87,5 @@ git tag v2.2.0 && git push --tags
 ```
 
 > Note: embedded packages don't get an update button in the Unity Package Manager (that
-> needs a reachable, authenticated source). The `git subtree pull` above is the update
-> mechanism.
+> needs a reachable, authenticated source). The `git subtree pull` / `toolkit update` above
+> is the update mechanism.

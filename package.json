@@ -1,6 +1,6 @@
 {
   "name": "com.josesilva.simplegamedev",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "displayName": "SimpleGameDev",
   "description": "Reusable Unity editor tools and runtime helpers (Favorites, Hub, Color Palette, Prefab Overrides, DebugLogger, PersistentObject, etc.).",
   "unity": "6000.0",
