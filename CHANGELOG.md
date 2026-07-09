@@ -4,6 +4,15 @@ All notable changes to this package are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.1] - 2026-07-09
+
+### Added
+- **"Prefab Overrides Indicator" toggle in the Hub.** `PrefabOverridesToolbar.SetEnabled` existed and
+  the indicator honoured its `EditorPrefs` flag, but nothing ever called it — the only way to turn the
+  indicator off was to write the (hashed) `EditorPrefs` key by hand. A scene heavy enough to stall the
+  scan was therefore a scene you could not recover from inside the editor. The Hub now exposes the
+  toggle next to Auto Refresh Watcher and Git Branch Display.
+
 ## [2.2.0] - 2026-07-09
 
 ### Changed

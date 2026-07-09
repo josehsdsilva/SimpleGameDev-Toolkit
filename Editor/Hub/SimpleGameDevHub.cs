@@ -50,6 +50,7 @@ internal class SimpleGameDevHub : EditorWindow
 
         DrawToggle("Auto Refresh Watcher", AutoRefreshWatcher.IsEnabled, AutoRefreshWatcher.SetEnabled);
         DrawToggle("Git Branch Display", GitBranchToolbar.IsEnabled, GitBranchToolbar.SetEnabled);
+        DrawToggle("Prefab Overrides Indicator", PrefabOverridesToolbar.IsEnabled, PrefabOverridesToolbar.SetEnabled);
 
         EditorGUI.indentLevel--;
     }
