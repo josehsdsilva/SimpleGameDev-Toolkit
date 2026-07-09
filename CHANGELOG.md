@@ -4,6 +4,19 @@ All notable changes to this package are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2026-07-09
+
+### Changed
+- **Relicensed from `Proprietary — All rights reserved` to the `MIT` license.** The repository
+  is public, so "all rights reserved" contradicted the intent: it let people read the code but
+  granted nobody — not even collaborators on the consuming games — the right to use it. MIT
+  aligns the licence with how the package is actually consumed, and unblocks OpenUPM, which
+  requires an open-source licence.
+- Consumers now track the `main` branch by git URL rather than pinning a tag, so the Package
+  Manager's **Update** button re-resolves to the newest commit. `packages-lock.json` still pins
+  the resolved commit hash, so other machines and CI stay deterministic. Tags remain as release
+  markers for this changelog.
+
 ## [2.1.2] - 2026-07-09
 
 ### Fixed

@@ -1,6 +1,6 @@
 {
   "name": "com.josesilva.simplegamedev",
-  "version": "2.1.2",
+  "version": "2.2.0",
   "displayName": "SimpleGameDev",
   "description": "Reusable Unity editor tools and runtime helpers (Favorites, Hub, Color Palette, Prefab Overrides, DebugLogger, PersistentObject, etc.).",
   "unity": "6000.0",
@@ -8,7 +8,7 @@
     "name": "José Silva",
     "url": "https://github.com/josehsdsilva"
   },
-  "license": "Proprietary",
+  "license": "MIT",
   "documentationUrl": "https://github.com/josehsdsilva/SimpleGameDev-Toolkit#readme",
   "changelogUrl": "https://github.com/josehsdsilva/SimpleGameDev-Toolkit/blob/main/CHANGELOG.md",
   "licensesUrl": "https://github.com/josehsdsilva/SimpleGameDev-Toolkit/blob/main/LICENSE.md",
