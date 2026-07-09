@@ -107,6 +107,7 @@ internal class PrefabOverridesWindow : EditorWindow
         if (GUILayout.Button("Refresh", EditorStyles.toolbarButton, GUILayout.Width(70)))
         {
             Refresh();
+            PrefabOverridesToolbar.ForceRefresh();
         }
 
         autoRefreshOnHierarchyChange = GUILayout.Toggle(

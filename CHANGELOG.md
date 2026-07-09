@@ -4,6 +4,25 @@ All notable changes to this package are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.2] - 2026-07-09
+
+### Fixed
+- **Prefab Overrides indicator no longer freezes the editor on every inspector edit.**
+  Changing a single Transform value on a prefab instance fires `prefabInstanceUpdated`, which
+  marked the toolbar indicator dirty and ran a full-scene scan synchronously on the main thread.
+  Measured on a scene with 1665 transforms: **21-22 s per scan** — and the 5 s throttle limited how
+  *often* that ran, not how much it cost.
+  - The scan now rejects clean prefab instances via `IsAnyPrefabInstanceRoot` +
+    `HasPrefabInstanceAnyOverrides` before touching `GetObjectOverrides` or building a
+    `SerializedObject`, and the toolbar's count path no longer resolves the innermost prefab
+    asset, the outermost path, or the property modifications — none of which affect the number.
+    Same scene, same result (156 overrides): **~0.5 s, a 30-40x speedup.**
+  - `MarkDirty()` now debounces (1.5 s of quiet) instead of throttling, so dragging an inspector
+    field no longer queues a scan per frame.
+  - Scans are skipped while compiling, importing, or in play mode.
+  - A scan that exceeds a 250 ms budget disables auto-refresh for that scene and logs why; the
+    indicator marks its count stale and the Prefab Overrides window's **Refresh** re-enables it.
+
 ## [2.1.1] - 2026-06-08
 
 ### Changed

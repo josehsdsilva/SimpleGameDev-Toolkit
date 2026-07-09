@@ -38,23 +38,34 @@ internal static class PrefabOverridesScanner
             return result;
         }
 
-        HashSet<GameObject> visited = new HashSet<GameObject>();
         GameObject[] roots = scene.GetRootGameObjects();
         foreach (GameObject root in roots)
         {
-            CollectFromHierarchy(root, result, visited);
+            CollectFromHierarchy(root, result);
         }
 
         return result;
     }
 
+    /// Toolbar-only count. Deliberately does NOT build OverrideEntry: resolving the innermost
+    /// asset, the outermost path and the property modifications costs an AssetDatabase lookup
+    /// per prefab instance and contributes nothing to the total.
     internal static int CountOverrides()
     {
-        List<OverrideEntry> entries = ScanActiveScene();
-        int total = 0;
-        foreach (OverrideEntry entry in entries)
+        Scene scene = SceneManager.GetActiveScene();
+        if (!scene.IsValid() || !scene.isLoaded)
         {
-            total += entry.TotalCount;
+            return 0;
+        }
+
+        int total = 0;
+        GameObject[] roots = scene.GetRootGameObjects();
+        foreach (GameObject root in roots)
+        {
+            foreach (GameObject instanceRoot in EnumerateOverriddenInstanceRoots(root))
+            {
+                total += CountOverridesOnRoot(instanceRoot);
+            }
         }
         return total;
     }
@@ -106,29 +117,67 @@ internal static class PrefabOverridesScanner
         }
     }
 
-    static void CollectFromHierarchy(GameObject root, List<OverrideEntry> result, HashSet<GameObject> visited)
+    /// Yields every prefab instance root (outermost and nested) under `root` that Unity's own
+    /// native check says carries at least one override. Each instance root is a distinct
+    /// GameObject, so no dedup set is needed.
+    ///
+    /// The cheap `IsAnyPrefabInstanceRoot` + `HasPrefabInstanceAnyOverrides` pair rejects the
+    /// overwhelming majority of instances before we ever touch `GetObjectOverrides` or build a
+    /// `SerializedObject` — those are what made a scene with hundreds of nested prefabs (an art
+    /// scene with a fully dressed mansion) stall the editor for seconds per scan.
+    static IEnumerable<GameObject> EnumerateOverriddenInstanceRoots(GameObject root)
     {
         if (root == null)
         {
-            return;
+            yield break;
         }
 
         Transform[] all = root.GetComponentsInChildren<Transform>(true);
         foreach (Transform t in all)
         {
             GameObject go = t.gameObject;
-            if (!PrefabUtility.IsPartOfPrefabInstance(go))
+            if (!PrefabUtility.IsAnyPrefabInstanceRoot(go))
             {
                 continue;
             }
-
-            GameObject nearestRoot = PrefabUtility.GetNearestPrefabInstanceRoot(go);
-            if (nearestRoot == null || visited.Contains(nearestRoot))
+            if (!PrefabUtility.HasPrefabInstanceAnyOverrides(go, false))
             {
                 continue;
             }
-            visited.Add(nearestRoot);
+            yield return go;
+        }
+    }
 
+    static int CountOverridesOnRoot(GameObject instanceRoot)
+    {
+        int count = 0;
+
+        List<ObjectOverride> objectOverrides = PrefabUtility.GetObjectOverrides(instanceRoot, false);
+        if (objectOverrides != null)
+        {
+            foreach (ObjectOverride objectOverride in objectOverrides)
+            {
+                if (objectOverride == null || objectOverride.instanceObject == null)
+                {
+                    continue;
+                }
+                if (HasApplicableOverride(objectOverride.instanceObject))
+                {
+                    count++;
+                }
+            }
+        }
+
+        count += PrefabUtility.GetAddedComponents(instanceRoot)?.Count ?? 0;
+        count += PrefabUtility.GetRemovedComponents(instanceRoot)?.Count ?? 0;
+        count += PrefabUtility.GetAddedGameObjects(instanceRoot)?.Count ?? 0;
+        return count;
+    }
+
+    static void CollectFromHierarchy(GameObject root, List<OverrideEntry> result)
+    {
+        foreach (GameObject nearestRoot in EnumerateOverriddenInstanceRoots(root))
+        {
             List<ObjectOverride> objectOverrides = FilterObjectOverrides(PrefabUtility.GetObjectOverrides(nearestRoot, false));
             List<PropertyModification> mods = CollectModifications(nearestRoot);
             List<AddedComponent> addedComponents = PrefabUtility.GetAddedComponents(nearestRoot);
@@ -146,7 +195,7 @@ internal static class PrefabOverridesScanner
             Object innermostAsset = ResolveInnermostAsset(nearestRoot);
             string innermostPath = innermostAsset != null ? AssetDatabase.GetAssetPath(innermostAsset) : null;
 
-            GameObject outermostRoot = PrefabUtility.GetOutermostPrefabInstanceRoot(go);
+            GameObject outermostRoot = PrefabUtility.GetOutermostPrefabInstanceRoot(nearestRoot);
             string outermostPath = outermostRoot != null
                 ? PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(outermostRoot)
                 : null;
