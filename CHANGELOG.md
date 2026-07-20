@@ -4,6 +4,21 @@ All notable changes to this package are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0] - 2026-07-20
+
+### Changed
+- **`DebugLogger.Log` and `LogWarning` are now compile-time stripped from player builds** via
+  `[Conditional("UNITY_EDITOR")] / [Conditional("SGD_LOGS_IN_BUILD")]`. The call sites — including
+  the caller's string interpolation — vanish from the binary, so shipped builds pay zero cost for
+  hundreds of log calls (previously every call allocated its message string and a filename string
+  before the enabled check). To keep these logs in a build (dev/QA builds), define
+  `SGD_LOGS_IN_BUILD` in that build's scripting defines. **Breaking nuance:** the runtime
+  `enableAllLogsInBuild` toggle now only matters in builds that define `SGD_LOGS_IN_BUILD` — for
+  `Log`/`LogWarning` there is nothing to toggle otherwise. `LogError` and `LogException` are always
+  compiled (they are the error-reporting path crash tooling reads).
+- Inside every log method the cheap `minimumLogLevel` check now runs before the caller-filename
+  string is built, so disabled levels no longer allocate in the editor either.
+
 ## [2.2.1] - 2026-07-09
 
 ### Added

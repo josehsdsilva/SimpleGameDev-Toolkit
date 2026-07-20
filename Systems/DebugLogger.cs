@@ -393,25 +393,36 @@ public class DebugLogger : MonoBehaviour
         return $"{location} -> {method} -> {message}";
     }
 
+    // Log/LogWarning are compile-time stripped from player builds unless SGD_LOGS_IN_BUILD is
+    // defined for that build: [Conditional] removes the entire call site — including the caller's
+    // string interpolation — so shipped builds pay zero cost (no allocation, no call). This
+    // supersedes enableAllLogsInBuild for these two levels: a build must define SGD_LOGS_IN_BUILD
+    // (compile-time) for the runtime toggle to have anything to toggle. LogError and LogException
+    // are always compiled — they are the error-reporting path and crash tooling reads them.
+    // Inside each method the cheap level check runs before the scriptName string is built.
+    [System.Diagnostics.Conditional("UNITY_EDITOR"), System.Diagnostics.Conditional("SGD_LOGS_IN_BUILD")]
     public void Log(string message,
         [CallerFilePath] string file = "",
         [CallerMemberName] string member = "",
         [CallerLineNumber] int line = 0)
     {
+        if (minimumLogLevel > LogLevel.Log) return;
         string scriptName = Path.GetFileNameWithoutExtension(file);
-        if (minimumLogLevel > LogLevel.Log || !ShouldLog(scriptName)) return;
-        
+        if (!ShouldLog(scriptName)) return;
+
         Debug.Log(FormatMessage(message, scriptName, member, line, LOG_COLOR));
     }
 
+    [System.Diagnostics.Conditional("UNITY_EDITOR"), System.Diagnostics.Conditional("SGD_LOGS_IN_BUILD")]
     public void LogWarning(string message,
         [CallerFilePath] string file = "",
         [CallerMemberName] string member = "",
         [CallerLineNumber] int line = 0)
     {
+        if (minimumLogLevel > LogLevel.Warning) return;
         string scriptName = Path.GetFileNameWithoutExtension(file);
-        if (minimumLogLevel > LogLevel.Warning || !ShouldLog(scriptName)) return;
-        
+        if (!ShouldLog(scriptName)) return;
+
         Debug.LogWarning(FormatMessage(message, scriptName, member, line, WARNING_COLOR));
     }
 
@@ -420,14 +431,17 @@ public class DebugLogger : MonoBehaviour
         [CallerMemberName] string member = "",
         [CallerLineNumber] int line = 0)
     {
+        if (minimumLogLevel > LogLevel.Error) return;
         string scriptName = Path.GetFileNameWithoutExtension(file);
-        if (minimumLogLevel > LogLevel.Error || !ShouldLog(scriptName)) return;
-        
+        if (!ShouldLog(scriptName)) return;
+
         Debug.LogError(FormatMessage(message, scriptName, member, line, ERROR_COLOR));
     }
 
     // Overloaded methods for formatted strings
+    [System.Diagnostics.Conditional("UNITY_EDITOR"), System.Diagnostics.Conditional("SGD_LOGS_IN_BUILD")]
     public void Log(string format, params object[] args) => Log(string.Format(format, args));
+    [System.Diagnostics.Conditional("UNITY_EDITOR"), System.Diagnostics.Conditional("SGD_LOGS_IN_BUILD")]
     public void LogWarning(string format, params object[] args) => LogWarning(string.Format(format, args));
     public void LogError(string format, params object[] args) => LogError(string.Format(format, args));
 
