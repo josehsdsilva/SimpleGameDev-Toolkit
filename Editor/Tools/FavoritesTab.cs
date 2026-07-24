@@ -143,6 +143,10 @@ public class FavoritesTab : EditorWindow
     {
         if (item == null) return;
 
+        // Hide (but keep) entries whose asset doesn't exist right now —
+        // it may exist on another branch, so it reappears when the path resolves again
+        if (!item.isFolder && !TryResolveAsset(item)) return;
+
         // Filter search
         if (!string.IsNullOrEmpty(searchFilter))
         {
@@ -289,20 +293,7 @@ public class FavoritesTab : EditorWindow
 
     private void DrawAssetInRect(FavoriteItem item, int index, FavoriteItem parentFolder, Rect rect)
     {
-        // Load cached object if needed
-        if (item.cachedObject == null && !string.IsNullOrEmpty(item.path))
-        {
-            if (item.path.EndsWith(".unity"))
-            {
-                item.cachedObject = AssetDatabase.LoadAssetAtPath<SceneAsset>(item.path);
-            }
-            else
-            {
-                item.cachedObject = AssetDatabase.LoadAssetAtPath<Object>(item.path);
-            }
-        }
-
-        if (item.cachedObject == null) return;
+        if (!TryResolveAsset(item)) return;
 
         float xPos = rect.x;
 
@@ -687,16 +678,9 @@ public class FavoritesTab : EditorWindow
     {
         foreach (var item in items)
         {
-            if (!item.isFolder && !string.IsNullOrEmpty(item.path))
+            if (!item.isFolder)
             {
-                if (item.path.EndsWith(".unity"))
-                {
-                    item.cachedObject = AssetDatabase.LoadAssetAtPath<SceneAsset>(item.path);
-                }
-                else
-                {
-                    item.cachedObject = AssetDatabase.LoadAssetAtPath<Object>(item.path);
-                }
+                TryResolveAsset(item);
             }
 
             if (item.isFolder && item.children != null)
@@ -704,6 +688,23 @@ public class FavoritesTab : EditorWindow
                 LoadCachedObjects(item.children);
             }
         }
+    }
+
+    private static bool TryResolveAsset(FavoriteItem item)
+    {
+        if (item.cachedObject != null) return true;
+        if (string.IsNullOrEmpty(item.path)) return false;
+
+        if (item.path.EndsWith(".unity"))
+        {
+            item.cachedObject = AssetDatabase.LoadAssetAtPath<SceneAsset>(item.path);
+        }
+        else
+        {
+            item.cachedObject = AssetDatabase.LoadAssetAtPath<Object>(item.path);
+        }
+
+        return item.cachedObject != null;
     }
 
     private void DrawDragHandle(Rect rect)

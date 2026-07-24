@@ -4,6 +4,17 @@ All notable changes to this package are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.1] - 2026-07-24
+
+### Fixed
+- **Favorites no longer renders blank rows for missing assets.** `DrawFavoriteItem` reserved the
+  line rect before `DrawAssetInRect` checked whether the asset still resolved, so a favorite whose
+  path no longer exists (deleted, or only present on another git branch) drew an empty line.
+  Missing entries are now hidden instead of drawn — and deliberately **kept in the saved data**,
+  so a favorite that only exists on another branch reappears automatically when you switch to it.
+  Asset resolution is unified in a single `TryResolveAsset` helper (draw, search cache and load
+  paths all share it).
+
 ## [2.3.0] - 2026-07-20
 
 ### Changed
