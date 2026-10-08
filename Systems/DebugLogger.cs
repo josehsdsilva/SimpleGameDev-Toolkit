@@ -461,7 +461,28 @@ public class DebugLogger : MonoBehaviour
     {
         if (string.IsNullOrEmpty(scriptName)) return false;
         if (!Application.isEditor && enableAllLogsInBuild) return true;
-        return scriptSettings.TryGetValue(scriptName, out bool isEnabled) && isEnabled;
+        if (scriptSettings.TryGetValue(scriptName, out bool isEnabled)) return isEnabled;
+        return LogsUnindexedScript(scriptName);
+    }
+
+    // A script the index has not seen yet (added since the last Refresh, or living in a package,
+    // which the scan skips) logs by default in the editor and in SGD_LOGS_IN_BUILD builds, like a
+    // freshly indexed script would. Dropping it silently made new code look like it never ran.
+    // Release builds keep the old behaviour: only indexed, enabled scripts log.
+    private static bool _unindexedHintShown;
+
+    private bool LogsUnindexedScript(string scriptName)
+    {
+#if UNITY_EDITOR || SGD_LOGS_IN_BUILD
+        if (!_unindexedHintShown && scriptName != nameof(DebugLogger))
+        {
+            _unindexedHintShown = true;
+            Debug.Log($"DebugLogger: '{scriptName}' is not in the script index (added since the last Refresh, or outside Assets/), so it logs by default, as does every unindexed script. Click Refresh on the DebugLogger inspector to index new scripts and toggle them one by one.");
+        }
+        return true;
+#else
+        return false;
+#endif
     }
 
     public void SetScriptEnabled(string scriptName, bool enabled)

@@ -129,6 +129,8 @@ internal class SimpleGameDevHub : EditorWindow
         EditorGUI.EndDisabledGroup();
         EditorGUILayout.EndHorizontal();
 
+        DrawToggle("Save Scenes Without Asking", PlayModeSceneManager.AutoSaveOnPlayPref, PlayModeSceneManager.SetAutoSaveOnPlayPref);
+
         EditorGUI.indentLevel--;
     }
 

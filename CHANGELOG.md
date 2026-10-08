@@ -4,6 +4,29 @@ All notable changes to this package are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.0] - 2026-10-08
+
+### Changed
+- **`DebugLogger` no longer drops logs from scripts it has not indexed yet.** The index is built by
+  scanning `Assets/` and only refreshed on demand, so a script added since the last Refresh (or one
+  living in a package, which the scan never sees) had every `Log`/`LogWarning`/`LogError` silently
+  dropped, which made new code look like it never ran. In the editor and in `SGD_LOGS_IN_BUILD` builds an
+  unindexed script now logs by default, the same as a freshly indexed one (new entries were always
+  enabled). One info line per domain reload names the first such script and points at Refresh.
+  Unchanged: entries you disabled stay silent, and release builds (no `SGD_LOGS_IN_BUILD`) still log
+  only indexed, enabled scripts.
+
+### Added
+- **Opt-in "save scenes without asking" for the Play Mode start scene.** `PlayModeSceneManager`
+  shows Unity's "save modified scenes?" modal before switching to the start scene, which stalls
+  automated drivers (editor bridges, MCP servers) whenever a scene is dirty. When the opt-in is on,
+  dirty scenes are saved silently instead; an untitled dirty scene cannot be saved without a file
+  dialog, so the start-scene switch is skipped with a warning rather than prompting. Turn it on through
+  any of: the Hub toggle "Save Scenes Without Asking" (`EditorPrefs` `SGD.AutoSaveOnPlay`, per
+  machine), `SessionState.SetBool("SGD.AutoSaveOnPlay", true)` (until the editor closes, for a driver
+  to set at runtime), or the `SGD_AUTOSAVE_ON_PLAY=1` environment variable. Off by default: the prompt
+  is unchanged for people.
+
 ## [2.3.1] - 2026-07-24
 
 ### Fixed
